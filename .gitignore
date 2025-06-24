@@ -39,9 +39,10 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
 # Package.pins
-# Package.resolved
+Package.resolved
 .build/
 .swiftpm
+.index-build/
 
 # CocoaPods
 #
@@ -76,3 +77,35 @@ fastlane/test_output
 # Generated OpenAPI files (generated at consumer build time)
 Sources/OmniChatKit/Generated/*
 !Sources/OmniChatKit/Generated/.gitkeep
+
+# IDE - VSCode
+.vscode/
+
+# IDE - JetBrains
+.idea/
+*.iml
+
+# Linux
+*.swp
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Binary files
+*.o
+*.a
+*.dylib
+*.so
+*.dll
+*.exe
+
+# Test coverage
+*.profraw
+*.profdata
+.coverage/
+
+# Documentation build
+.build-docs/
+docs.json
