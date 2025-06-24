@@ -30,10 +30,8 @@ OmniChatKit/
 │       ├── openapi.json             # OpenAPI specification (committed)
 │       ├── openapi-generator-config.yaml # Generator configuration
 │       ├── Core/
-│       │   ├── OmniChatClient.swift     # Main client implementation
+│       │   ├── OmniChatClientMinimal.swift # Minimal client example
 │       │   └── OmniChatError.swift      # Error types
-│       ├── Protocols/
-│       │   └── OmniChatProtocols.swift  # Protocol definitions
 │       ├── Authentication/
 │       │   └── AuthenticationManager.swift # Auth handling
 │       ├── Networking/
@@ -45,20 +43,20 @@ OmniChatKit/
 │           └── .gitkeep
 ├── Tests/
 │   └── OmniChatKitTests/
-│       └── OmniChatClientTests.swift    # Unit tests
+│       └── OmniChatClientMinimalTests.swift # Unit tests
 ├── Examples/
-│   └── BasicUsage.swift                 # Usage examples
-└── Scripts/
-    └── update-openapi-spec.sh           # Update OpenAPI spec
+│   ├── BasicUsage.swift                 # Basic usage examples
+│   └── SimpleExample.swift              # Simple integration example
+├── Scripts/
+│   ├── update-openapi-spec.sh           # Update OpenAPI spec
+│   └── generate-and-commit.sh           # Generate code for development
+├── Makefile                             # Development workflow
+└── build.sh                             # Build script
 ```
 
-### 2. **Protocol-Oriented Architecture**
+### 2. **Architecture**
 
-- `OmniChatClientProtocol`: Main protocol defining all API methods
-- `AuthenticationProviding`: Authentication header provider
-- `TokenRefreshing`: Token refresh capability
-- `RequestIntercepting`: Request modification hooks
-- `ResponseValidating`: Response validation
+The package uses swift-openapi-generator to create type-safe API clients. The generated code provides all the protocol definitions and types needed for the API operations.
 
 ### 3. **Authentication Support**
 
@@ -77,7 +75,7 @@ OmniChatKit/
 ### 5. **File Transfer Features**
 
 - Upload/download with progress tracking
-- `FileUploadProgress` and `FileDownloadProgress` observable objects
+- `FileUploadProgress` and `FileDownloadProgress` with thread-safe state management
 - URLSession-based implementation with delegate callbacks
 - Support for large file transfers
 
@@ -119,9 +117,9 @@ All 43 endpoints implemented:
 
 - Swift 5.9 with strict concurrency
 - Actor isolation for thread safety
-- Observation framework integration
 - Sendable conformance throughout
 - Structured concurrency with async/await
+- Cross-platform support (Linux, macOS, iOS, etc.)
 
 ### 10. **Testing & Documentation**
 
@@ -185,6 +183,5 @@ git push origin main --tags
 - swift-openapi-urlsession (1.0.0+) - URLSession transport
 - swift-log (1.5.0+) - Logging
 - swift-crypto (3.0.0+) - Cryptography
-- async-http-client (1.19.0+) - HTTP client
 
 The package is production-ready with comprehensive error handling, full API coverage, and modern Swift best practices throughout.
