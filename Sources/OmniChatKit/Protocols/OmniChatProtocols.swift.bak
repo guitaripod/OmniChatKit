@@ -1,6 +1,9 @@
 import Foundation
 import OpenAPIRuntime
 import OpenAPIURLSession
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 public protocol OmniChatClientProtocol: Sendable {
     func appleSignIn(idToken: String, user: AppleAuthRequest.UserPayload?) async throws -> AuthResponse

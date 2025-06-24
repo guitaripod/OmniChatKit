@@ -1,14 +1,19 @@
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
+#if canImport(OSLog)
 import OSLog
-import Observation
+#else
+import Logging
+#endif
 
-@Observable
 public final class FileUploadProgress: @unchecked Sendable {
     public let totalBytes: Int64
     public private(set) var uploadedBytes: Int64 = 0
     public private(set) var fractionCompleted: Double = 0
     public private(set) var isCompleted = false
-    public private(set) var error: Error?
+    public private(set) var error: (any Error)?
     
     private let lock = NSLock()
     
@@ -33,7 +38,7 @@ public final class FileUploadProgress: @unchecked Sendable {
         self.uploadedBytes = totalBytes
     }
     
-    func markFailed(with error: Error) {
+    func markFailed(with error: any Error) {
         lock.lock()
         defer { lock.unlock() }
         
@@ -42,13 +47,12 @@ public final class FileUploadProgress: @unchecked Sendable {
     }
 }
 
-@Observable
 public final class FileDownloadProgress: @unchecked Sendable {
     public let totalBytes: Int64
     public private(set) var downloadedBytes: Int64 = 0
     public private(set) var fractionCompleted: Double = 0
     public private(set) var isCompleted = false
-    public private(set) var error: Error?
+    public private(set) var error: (any Error)?
     public private(set) var data: Data?
     
     private let lock = NSLock()
@@ -78,7 +82,7 @@ public final class FileDownloadProgress: @unchecked Sendable {
         self.data = data
     }
     
-    func markFailed(with error: Error) {
+    func markFailed(with error: any Error) {
         lock.lock()
         defer { lock.unlock() }
         
@@ -88,7 +92,11 @@ public final class FileDownloadProgress: @unchecked Sendable {
 }
 
 public final class FileTransferManager: NSObject, @unchecked Sendable {
+    #if canImport(OSLog)
     private let logger = Logger(subsystem: "com.omnichat.kit", category: "FileTransferManager")
+    #else
+    private let logger = Logger(label: "com.omnichat.kit.FileTransferManager")
+    #endif
     private let session: URLSession
     private var uploadTasks: [URLSessionUploadTask: FileUploadProgress] = [:]
     private var downloadTasks: [URLSessionDownloadTask: FileDownloadProgress] = [:]
@@ -99,14 +107,12 @@ public final class FileTransferManager: NSObject, @unchecked Sendable {
         configuration.timeoutIntervalForRequest = 300
         configuration.timeoutIntervalForResource = 600
         
-        self.session = URLSession(configuration: configuration)
-        super.init()
-        
         self.session = URLSession(
             configuration: configuration,
-            delegate: self,
+            delegate: nil,
             delegateQueue: nil
         )
+        super.init()
     }
     
     public func uploadFile(

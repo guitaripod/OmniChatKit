@@ -1,0 +1,10 @@
+generate:
+  - types
+  - client
+accessModifier: public
+additionalImports:
+  - Foundation
+  - _Concurrency
+# Filter removed to generate all operations
+# featureFlags:
+#   - proposal-NNNN  # Enable when specific feature flags are needed

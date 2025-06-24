@@ -1,5 +1,12 @@
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
+#if canImport(OSLog)
 import OSLog
+#else
+import Logging
+#endif
 
 public struct SSEEvent: Sendable {
     public let id: String?
@@ -9,7 +16,11 @@ public struct SSEEvent: Sendable {
 }
 
 public actor SSEParser {
+    #if canImport(OSLog)
     private let logger = Logger(subsystem: "com.omnichat.kit", category: "SSEParser")
+    #else
+    private let logger = Logger(label: "com.omnichat.kit.SSEParser")
+    #endif
     
     public init() {}
     
@@ -87,12 +98,16 @@ private struct SSEEventBuilder {
 }
 
 public final class StreamingResponseHandler: @unchecked Sendable {
-    private let continuation: AsyncThrowingStream<String, Error>.Continuation
+    private let continuation: AsyncThrowingStream<String, any Error>.Continuation
     private let parser = SSEParser()
+    #if canImport(OSLog)
     private let logger = Logger(subsystem: "com.omnichat.kit", category: "StreamingResponseHandler")
+    #else
+    private let logger = Logger(label: "com.omnichat.kit.StreamingResponseHandler")
+    #endif
     private var buffer = Data()
     
-    init(continuation: AsyncThrowingStream<String, Error>.Continuation) {
+    init(continuation: AsyncThrowingStream<String, any Error>.Continuation) {
         self.continuation = continuation
     }
     
@@ -117,7 +132,7 @@ public final class StreamingResponseHandler: @unchecked Sendable {
         }
     }
     
-    public func handleError(_ error: Error) {
+    public func handleError(_ error: any Error) {
         continuation.finish(throwing: error)
     }
     
@@ -130,8 +145,8 @@ public extension AsyncThrowingStream where Element == String {
     static func chatStream(
         from urlSession: URLSession,
         request: URLRequest
-    ) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
+    ) -> AsyncThrowingStream<String, any Error> {
+        AsyncThrowingStream<String, any Error> { continuation in
             let handler = StreamingResponseHandler(continuation: continuation)
             
             let task = urlSession.dataTask(with: request) { data, response, error in

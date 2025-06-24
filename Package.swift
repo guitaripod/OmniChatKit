@@ -34,7 +34,6 @@ let package = Package(
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
             ],
-            exclude: ["openapi.json", "openapi-generator-config.yaml"],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("BareSlashRegexLiterals"),

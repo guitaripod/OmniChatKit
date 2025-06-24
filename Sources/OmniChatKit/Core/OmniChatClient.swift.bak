@@ -2,15 +2,27 @@ import Foundation
 import OpenAPIRuntime
 import OpenAPIURLSession
 import HTTPTypes
+#if canImport(OSLog)
 import OSLog
+#else
+import Logging
+#endif
+#if canImport(Observation)
 import Observation
+#endif
 
+#if canImport(Observation)
 @Observable
+#endif
 public final class OmniChatClient: OmniChatClientProtocol {
     private let underlyingClient: APIProtocol
     private let authManager: AuthenticationManager
     private let serverURL: URL
+    #if canImport(OSLog)
     private let logger = Logger(subsystem: "com.omnichat.kit", category: "OmniChatClient")
+    #else
+    private let logger = Logger(label: "com.omnichat.kit.OmniChatClient")
+    #endif
     private let session: URLSession
     
     public init(

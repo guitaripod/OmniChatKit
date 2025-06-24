@@ -1,5 +1,9 @@
 import Foundation
+#if canImport(OSLog)
 import OSLog
+#else
+import Logging
+#endif
 #if canImport(Security)
 import Security
 #endif
@@ -10,12 +14,16 @@ public enum AuthenticationType: Sendable {
     case apiKeys([String: String])
 }
 
-public actor AuthenticationManager: AuthenticationProviding, TokenRefreshing {
+public actor AuthenticationManager {
     private var authenticationType: AuthenticationType
     private var refreshTokenValue: String?
     private var accessToken: String?
     private var tokenExpirationDate: Date?
+    #if canImport(OSLog)
     private let logger = Logger(subsystem: "com.omnichat.kit", category: "AuthenticationManager")
+    #else
+    private let logger = Logger(label: "com.omnichat.kit.AuthenticationManager")
+    #endif
     
     #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     private let keychainService = "com.omnichat.kit.auth"
@@ -49,7 +57,7 @@ public actor AuthenticationManager: AuthenticationProviding, TokenRefreshing {
         }
     }
     
-    public func refreshToken() async throws -> TokenResponse {
+    public func refreshToken() async throws -> (accessToken: String, refreshToken: String?, expiresIn: Int) {
         guard let refreshTokenValue = refreshTokenValue else {
             throw OmniChatError.authentication(.missingRefreshToken)
         }
