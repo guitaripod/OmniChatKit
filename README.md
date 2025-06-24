@@ -48,7 +48,7 @@ Or in Xcode:
 - watchOS 10.0+
 - tvOS 17.0+
 - visionOS 1.0+
-- Linux (Ubuntu 22.04+)
+- Linux
 - Swift 5.9+
 
 ## Usage
