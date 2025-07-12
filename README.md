@@ -30,7 +30,7 @@ Add OmniChatKit to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/marcusziade/OmniChatKit", from: "1.0.0")
+    .package(url: "https://github.com/guitaripod/OmniChatKit", from: "1.0.0")
 ]
 ```
 
